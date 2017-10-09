@@ -1,18 +1,15 @@
-# yum
-Yokota's Undeveloped Model
-
 **********************************************************************
 # Yokota's Undeveloped Model
+**********************************************************************
+## Feautures
 - Sphere Coordinate System
 - Reduced Gravity
 - Equatorial Region
 - Orlanski Radiation condition at Northern and Southern boundaries
-
-
 - Target Region: 30S-30N, 120E-70W
 - Computational Region : 50S-50N, 100E-60W
 
-
+## Revision
 - 5th release(orc) 2017/10/10, by h.yokota
 - 4th release(dp) 2017/07/07, by h.yokota
 - 3rd release(f90) 2017/05/31, by h.yokota
