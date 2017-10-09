@@ -54,4 +54,3 @@ Yokota's Undeveloped Model
 !     cl............Courant Number　for Orlanski Radiation Condition
 !
 ! **********************************************************************
-
