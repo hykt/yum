@@ -475,17 +475,17 @@ SUBROUTINE calculation(it)
   !
   ! ------------------------------ Apply Orlanski radiation condition
   ! ------------------------------ at Northern open boundary
-  DO i=1,ix
-     IF (igrdu(i,jy)==0) CYCLE
-     cl = ( u(i,jy-1,-2)-u(i,jy-1,0) ) / ( u(i,jy-1,0)+u(i,jy-1,-2)-2.0d0*u(i,jy-2,-1) )
-     IF (cl<0 .OR. isnan(cl) ) THEN      ! μ = 0
-        u(i,jy,1) = u(i,jy,-1)
-     ELSE IF (cl>1) THEN ! μ = 1
-        u(i,jy,1) = u(i,jy-1,0)
-     ELSE                ! 0 < μ < 1
-        u(i,jy,1) = ( u(i,jy,-1)*(1.0d0-cl)+2.0d0*cl*u(i,jy-1,0) ) / ( 1.0d0+cl )
-     ENDIF
-  ENDDO
+  !  DO i=1,ix
+  !     IF (igrdu(i,jy)==0) CYCLE
+  !     cl = ( u(i,jy-1,-2)-u(i,jy-1,0) ) / ( u(i,jy-1,0)+u(i,jy-1,-2)-2.0d0*u(i,jy-2,-1) )
+  !     IF (cl<0 .OR. isnan(cl) ) THEN      ! μ = 0
+  !        u(i,jy,1) = u(i,jy,-1)
+  !     ELSE IF (cl>1) THEN ! μ = 1
+  !        u(i,jy,1) = u(i,jy-1,0)
+  !     ELSE                ! 0 < μ < 1
+  !        u(i,jy,1) = ( u(i,jy,-1)*(1.0d0-cl)+2.0d0*cl*u(i,jy-1,0) ) / ( 1.0d0+cl )
+  !     ENDIF
+  !  ENDDO
   !
   DO i=1,ix
      IF (igrdv(i,jy)==0) CYCLE
@@ -516,17 +516,17 @@ SUBROUTINE calculation(it)
 
   ! ------------------------------ Apply Orlanski radiation condition
   ! ------------------------------ at Southern open boundary
-  DO i=1,ix
-     IF (igrdu(i,1)==0) CYCLE
-     cl = ( u(i,1+1,-2)-u(i,1+1,0) ) / ( u(i,1+1,0)+u(i,1+1,-2)-2.0d0*u(i,1+2,-1) )
-     IF (cl<0 .OR. isnan(cl) ) THEN      ! μ = 0
-        u(i,1,1) = u(i,1,-1)
-     ELSE IF (cl>1) THEN ! μ = 1
-        u(i,1,1) = u(i,1+1,0)
-     ELSE                ! 0 < μ < 1
-        u(i,1,1) = ( u(i,1,-1)*(1.0d0-cl)+2.0d0*cl*u(i,1+1,0) ) / ( 1.0d0+cl )
-     ENDIF
-  ENDDO
+  !  DO i=1,ix
+  !     IF (igrdu(i,1)==0) CYCLE
+  !     cl = ( u(i,1+1,-2)-u(i,1+1,0) ) / ( u(i,1+1,0)+u(i,1+1,-2)-2.0d0*u(i,1+2,-1) )
+  !     IF (cl<0 .OR. isnan(cl) ) THEN      ! μ = 0
+  !        u(i,1,1) = u(i,1,-1)
+  !     ELSE IF (cl>1) THEN ! μ = 1
+  !        u(i,1,1) = u(i,1+1,0)
+  !     ELSE                ! 0 < μ < 1
+  !        u(i,1,1) = ( u(i,1,-1)*(1.0d0-cl)+2.0d0*cl*u(i,1+1,0) ) / ( 1.0d0+cl )
+  !     ENDIF
+  !  ENDDO
   !
   DO i=1,ix
      IF (igrdv(i,1)==0) CYCLE
@@ -757,7 +757,7 @@ PROGRAM yum
   INTEGER :: it, iend, iout, irec
 
   ! ---------------------------- define model run
-  iend = 1000         ! end of run [days]
+  iend = 1000          ! end of run [days]
   iout = 10            ! output interval [days]
   ! ---------------------------- initialize
   CALL initialization
