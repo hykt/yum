@@ -397,25 +397,25 @@ SUBROUTINE forcing
   DO j=1,jy
      DO i=1,ix
         !     taux(i,j)=  0.01d0*cos(2.0d0*pi*dble(j-11)/dble(103-1)) ! 2gyres
-        !     taux(i,j)=  0.01d0*cos(2.0d0*pi*dble(j-1)/dble(jy-1)) ! 2gyres
+        taux(i,j)=  0.01d0*COS(2.0d0*pi*DBLE(j-1)/DBLE(jy-1)) ! 2gyres
         !     taux(i,j)= -0.01d0*cos(pi*dble(j-1)/dble(jy-1))      ! 1gyre
         !     taux(i,j)= -0.01d0
-        taux(i,j)=  0.00d0
+        !        taux(i,j)=  0.00d0
 
         tauy(i,j)=  0.00d0
      ENDDO
   ENDDO
   ! ------------------------------ big water column at center of the ocean
-  DO j=INT(jy/2)-10,INT(jy/2)+10
-     DO i=INT(ix/2)-10,INT(ix/2)+10
-        r = SQRT((DBLE(ix/2+1-i))**2+(DBLE(jy/2+1-j))**2)
-        IF ( r<=10.0d0 ) THEN
-           h(i,j,0) = h(i,j,0)+20.0d0
-           h(i,j,-1) = h(i,j,-1)+20.0d0
-           h(i,j,-2) = h(i,j,-2)+20.0d0
-        ENDIF
-     ENDDO
-  ENDDO
+  !  DO j=INT(jy/2)-10,INT(jy/2)+10
+  !     DO i=INT(ix/2)-10,INT(ix/2)+10
+  !        r = SQRT((DBLE(ix/2+1-i))**2+(DBLE(jy/2+1-j))**2)
+  !        IF ( r<=10.0d0 ) THEN
+  !           h(i,j,0) = h(i,j,0)+20.0d0
+  !           h(i,j,-1) = h(i,j,-1)+20.0d0
+  !           h(i,j,-2) = h(i,j,-2)+20.0d0
+  !        ENDIF
+  !     ENDDO
+  !  ENDDO
   !
   RETURN
 END SUBROUTINE forcing
@@ -757,7 +757,7 @@ PROGRAM yum
   INTEGER :: it, iend, iout, irec
 
   ! ---------------------------- define model run
-  iend = 10000         ! end of run [days]
+  iend = 1000         ! end of run [days]
   iout = 10            ! output interval [days]
   ! ---------------------------- initialize
   CALL initialization
