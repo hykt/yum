@@ -832,3 +832,9 @@ END PROGRAM yum
 !     cl............Courant Number　for Orlanski Radiation Condition
 !
 ! **********************************************************************
+! Orlanski Radiation Condition
+!     μ = cl = xxx
+!     μ < 0:
+!     0 < μ < 1:
+!     μ > 1:
+! **********************************************************************
