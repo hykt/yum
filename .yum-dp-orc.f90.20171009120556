@@ -68,6 +68,12 @@ FUNCTION lat2j(flat)
   RETURN
 END FUNCTION lat2j
 ! **********************************************************************
+!!function cl()
+!!  use commons
+!!  implicit none
+!!
+!!end function cl
+! **********************************************************************
 
 ! **********************************************************************
 SUBROUTINE parameters
@@ -391,7 +397,7 @@ SUBROUTINE forcing
   DO j=1,jy
      DO i=1,ix
         !     taux(i,j)=  0.01d0*cos(2.0d0*pi*dble(j-11)/dble(103-1)) ! 2gyres
-        !      taux(i,j)=  0.01d0*COS(2.0d0*pi*DBLE(j-1)/DBLE(jy-1)) ! 2gyres
+        !     taux(i,j)=  0.01d0*cos(2.0d0*pi*dble(j-1)/dble(jy-1)) ! 2gyres
         !     taux(i,j)= -0.01d0*cos(pi*dble(j-1)/dble(jy-1))      ! 1gyre
         !     taux(i,j)= -0.01d0
         taux(i,j)=  0.00d0
@@ -641,15 +647,6 @@ SUBROUTINE nextstep()
   ENDDO
   ! ------------------------------ open boundary at northernmost & southernmost boundary
   !  DO i=1,ix
-  !
-  !     u(i, 1, 0) = u(i, 2  , 0)
-  !     u(i, 1,-1) = u(i, 2  ,-1)
-  !     u(i, 1,-2) = u(i, 2  ,-2)
-  !
-  !     u(i,jy, 0) = u(i,jy-1, 0)
-  !     u(i,jy,-1) = u(i,jy-1,-1)
-  !     u(i,jy,-2) = u(i,jy-1,-2)
-  !
   !     v(i, 1, 0) = v(i, 3  , 0)
   !     v(i, 1,-1) = v(i, 3  ,-1)
   !     v(i, 1,-2) = v(i, 3  ,-2)
@@ -661,11 +658,11 @@ SUBROUTINE nextstep()
   !     v(i,jy, 0) = v(i,jy-1, 0)
   !     v(i,jy,-1) = v(i,jy-1,-1)
   !     v(i,jy,-2) = v(i,jy-1,-2)
-  !
+
   !     h(i, 1, 0) = h(i, 2  , 0)
   !     h(i, 1,-1) = h(i, 2  ,-1)
   !     h(i, 1,-2) = h(i, 2  ,-2)
-  !
+
   !     h(i,jy, 0) = h(i,jy-1, 0)
   !     h(i,jy,-1) = h(i,jy-1,-1)
   !     h(i,jy,-2) = h(i,jy-1,-2)
@@ -760,7 +757,7 @@ PROGRAM yum
   INTEGER :: it, iend, iout, irec
 
   ! ---------------------------- define model run
-  iend = 10000          ! end of run [days]
+  iend = 10000         ! end of run [days]
   iout = 10            ! output interval [days]
   ! ---------------------------- initialize
   CALL initialization
@@ -839,32 +836,5 @@ END PROGRAM yum
 !     taux(i,j).....wind stress of eastward component (m**2/s)
 !     tauy(i,j).....wind stress of northward component (m**2/s)
 !     cl............Courant Number　for Orlanski Radiation Condition
-!
-! **********************************************************************
-! Orlanski Radiation Condition
-!                    n-2    n
-!                   φ    - φ
-!                    B∓1    B∓1
-!     μ = CL = ----------------------
-!                n      n-2      n-1
-!               φ    + φ    - 2•φ
-!                B∓1    B∓1      B∓2
-!
-!     μ=CL if 0<CL<1:
-!                 n-1                n
-!                φ   •( 1-μ ) + 2•μ•φ
-!         n+1     B                  B∓1
-!        φ    = -------------------------
-!         B               1 + μ
-!
-!     μ=0 if CL<0:
-!         n+1     n-1
-!        φ    =  φ
-!         B       B
-!
-!     μ=1 if  CL>1:
-!         n+1     n
-!        φ    =  φ
-!         B       B∓1
 !
 ! **********************************************************************
