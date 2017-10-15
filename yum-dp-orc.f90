@@ -394,7 +394,7 @@ SUBROUTINE forcing
         !      taux(i,j)=  0.01d0*COS(2.0d0*pi*DBLE(j-1)/DBLE(jy-1)) ! 2gyres
         !     taux(i,j)= -0.01d0*cos(pi*dble(j-1)/dble(jy-1))      ! 1gyre
         !     taux(i,j)= -0.01d0
-        taux(i,j)=  0.00d0
+        !taux(i,j)=  0.00d0
 
         tauy(i,j)=  0.00d0
      ENDDO
