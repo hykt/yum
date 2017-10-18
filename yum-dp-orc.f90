@@ -421,7 +421,6 @@ SUBROUTINE calculation(it)
   IMPLICIT NONE
   INTEGER :: i, j, n, it
   DOUBLE PRECISION :: a, dt, cl
-
   !
   IF (MOD(it,100)==1) THEN
      dt = dt1
@@ -507,7 +506,7 @@ SUBROUTINE calculation(it)
         h(i,jy,1) = ( h(i,jy,-1)*(1.0d0-cl)+2.0d0*cl*h(i,jy-1,0) ) / ( 1.0d0+cl )
      ENDIF
   ENDDO
-
+  !
   ! ------------------------------ Apply Orlanski radiation condition
   ! ------------------------------ at Southern open boundary
   DO i=1,ix
@@ -523,14 +522,17 @@ SUBROUTINE calculation(it)
   ENDDO
   !
   DO i=1,ix
-     IF (igrdv(i,1)==0) CYCLE
-     cl = ( v(i,1+1,-2)-v(i,1+1,0) ) / ( v(i,1+1,0)+v(i,1+1,-2)-2.0d0*v(i,1+2,-1) )
+     IF (igrdv(i,2)==0) CYCLE
+     cl = ( v(i,2+1,-2)-v(i,2+1,0) ) / ( v(i,2+1,0)+v(i,2+1,-2)-2.0d0*v(i,2+2,-1) )
      IF (cl<0 .OR. isnan(cl) ) THEN      ! μ = 0
-        v(i,1,1) = v(i,1,-1)
+        v(i,2,1) = v(i,2,-1)
+        v(i,1,1) = v(i,2,-1)
      ELSE IF (cl>1) THEN ! μ = 1
-        v(i,1,1) = v(i,1+1,0)
+        v(i,2,1) = v(i,2+1,0)
+        v(i,1,1) = v(i,2+1,0)
      ELSE                ! 0 < μ < 1
-        v(i,1,1) = ( v(i,1,-1)*(1.0d0-cl)+2.0d0*cl*v(i,1+1,0) ) / ( 1.0d0+cl )
+        v(i,2,1) = ( v(i,2,-1)*(1.0d0-cl)+2.0d0*cl*v(i,2+1,0) ) / ( 1.0d0+cl )
+        v(i,1,1) = ( v(i,2,-1)*(1.0d0-cl)+2.0d0*cl*v(i,2+1,0) ) / ( 1.0d0+cl )
      ENDIF
   ENDDO
   !
