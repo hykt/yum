@@ -3,7 +3,7 @@
 #FC    = ifort
 FC    = gfortran
 FFLAGS    = -O3
-SRC    = yum-dp-orc.f90
+SRC    = yum-dp-orc2.f90
 EXE    = a.out
 
 ###INCLUDE = -I /opt/netcdf/include

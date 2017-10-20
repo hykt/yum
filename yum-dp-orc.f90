@@ -391,7 +391,7 @@ SUBROUTINE forcing
   DO j=1,jy
      DO i=1,ix
         !     taux(i,j)=  0.01d0*cos(2.0d0*pi*dble(j-11)/dble(103-1)) ! 2gyres
-        !      taux(i,j)=  0.01d0*COS(2.0d0*pi*DBLE(j-1)/DBLE(jy-1)) ! 2gyres
+        taux(i,j)=  0.01d0*COS(2.0d0*pi*DBLE(j-1)/DBLE(jy-1)) ! 2gyres
         !     taux(i,j)= -0.01d0*cos(pi*dble(j-1)/dble(jy-1))      ! 1gyre
         !     taux(i,j)= -0.01d0
         !taux(i,j)=  0.00d0
@@ -400,16 +400,16 @@ SUBROUTINE forcing
      ENDDO
   ENDDO
   ! ------------------------------ big water column at center of the ocean
-  DO j=INT(jy/2)-10,INT(jy/2)+10
-     DO i=INT(ix/2)-10,INT(ix/2)+10
-        r = SQRT((DBLE(ix/2+1-i))**2+(DBLE(jy/2+1-j))**2)
-        IF ( r<=10.0d0 ) THEN
-           h(i,j,0) = h(i,j,0)+20.0d0
-           h(i,j,-1) = h(i,j,-1)+20.0d0
-           h(i,j,-2) = h(i,j,-2)+20.0d0
-        ENDIF
-     ENDDO
-  ENDDO
+  !  DO j=INT(jy/2)-10,INT(jy/2)+10
+  !     DO i=INT(ix/2)-10,INT(ix/2)+10
+  !        r = SQRT((DBLE(ix/2+1-i))**2+(DBLE(jy/2+1-j))**2)
+  !        IF ( r<=10.0d0 ) THEN
+  !           h(i,j,0) = h(i,j,0)+20.0d0
+  !           h(i,j,-1) = h(i,j,-1)+20.0d0
+  !           h(i,j,-2) = h(i,j,-2)+20.0d0
+  !        ENDIF
+  !     ENDDO
+  !  ENDDO
   !
   RETURN
 END SUBROUTINE forcing
@@ -641,37 +641,6 @@ SUBROUTINE nextstep()
      v(iv(n,2)+1,jv(n,2),-1) = v(iv(n,2),jv(n,2),-1)*bc
      v(iv(n,2)+1,jv(n,2),-2) = v(iv(n,2),jv(n,2),-2)*bc
   ENDDO
-  ! ------------------------------ open boundary at northernmost & southernmost boundary
-  !  DO i=1,ix
-  !
-  !     u(i, 1, 0) = u(i, 2  , 0)
-  !     u(i, 1,-1) = u(i, 2  ,-1)
-  !     u(i, 1,-2) = u(i, 2  ,-2)
-  !
-  !     u(i,jy, 0) = u(i,jy-1, 0)
-  !     u(i,jy,-1) = u(i,jy-1,-1)
-  !     u(i,jy,-2) = u(i,jy-1,-2)
-  !
-  !     v(i, 1, 0) = v(i, 3  , 0)
-  !     v(i, 1,-1) = v(i, 3  ,-1)
-  !     v(i, 1,-2) = v(i, 3  ,-2)
-  !
-  !     v(i, 2, 0) = v(i, 3  , 0)
-  !     v(i, 2,-1) = v(i, 3  ,-1)
-  !     v(i, 2,-2) = v(i, 3  ,-2)
-  !
-  !     v(i,jy, 0) = v(i,jy-1, 0)
-  !     v(i,jy,-1) = v(i,jy-1,-1)
-  !     v(i,jy,-2) = v(i,jy-1,-2)
-  !
-  !     h(i, 1, 0) = h(i, 2  , 0)
-  !     h(i, 1,-1) = h(i, 2  ,-1)
-  !     h(i, 1,-2) = h(i, 2  ,-2)
-  !
-  !     h(i,jy, 0) = h(i,jy-1, 0)
-  !     h(i,jy,-1) = h(i,jy-1,-1)
-  !     h(i,jy,-2) = h(i,jy-1,-2)
-  !  ENDDO
   !
   RETURN
 END SUBROUTINE nextstep
