@@ -345,26 +345,18 @@ SUBROUTINE mapping
      ENDDO
   ENDDO
   !
-  OPEN(61,file='../dat/land.map')
   DO j=jy,1,-1
      WRITE (61,'(203i1)') (land(i,j),i=1,ix)
   ENDDO
-  CLOSE(61)
-  OPEN(62,file='../dat/igrdu.map')
   DO j=jy,1,-1
      WRITE (62,'(203i1)') (igrdu(i,j),i=1,ix)
   ENDDO
-  CLOSE(62)
-  OPEN(63,file='../dat/igrdv.map')
   DO j=jy,1,-1
      WRITE (63,'(203i1)') (igrdv(i,j),i=1,ix)
   ENDDO
-  CLOSE(63)
-  OPEN(64,file='../dat/igrdh.map')
   DO j=jy,1,-1
      WRITE (64,'(203i1)') (igrdh(i,j),i=1,ix)
   ENDDO
-  CLOSE(64)
 
   !
   RETURN
@@ -420,7 +412,7 @@ SUBROUTINE calculation(it)
   USE commons
   IMPLICIT NONE
   INTEGER :: i, j, n, it
-  DOUBLE PRECISION :: a, dt, cl
+  DOUBLE PRECISION :: a, dt
   !
   IF (MOD(it,100)==1) THEN
      dt = dt1
@@ -512,91 +504,137 @@ SUBROUTINE grd()
 END SUBROUTINE grd
 
 ! **********************************************************************
-SUBROUTINE orc()
+SUBROUTINE orc(it, iout)
   ! **********************************************************************
   USE commons
   IMPLICIT NONE
-  INTEGER :: i
+  INTEGER :: i, it, iout
   DOUBLE PRECISION :: cl
+  CHARACTER(203) ::  clun,clvn,clhn,clus,clvs,clhs
   !
   ! ------------------------------ Apply Orlanski radiation condition
   ! ------------------------------ at Northern open boundary
   DO i=1,ix
-     IF (igrdu(i,jy)==0) CYCLE
+     IF ( igrdu(i,jy)==0 ) THEN
+        clun(i:i)='*'
+        CYCLE
+     ENDIF
      cl = ( u(i,jy-1,-2)-u(i,jy-1,0) ) / ( u(i,jy-1,0)+u(i,jy-1,-2)-2.0d0*u(i,jy-2,-1) )
-     IF (cl<0 .OR. isnan(cl) ) THEN      ! μ = 0
+     IF ( cl<0.0d0 .OR. isnan(cl) ) THEN      ! μ = 0
         u(i,jy,1) = u(i,jy,-1)
-     ELSE IF (cl>1) THEN ! μ = 1
+        clun(i:i)='0'
+     ELSE IF ( cl>1.0d0 ) THEN ! μ = 1
         u(i,jy,1) = u(i,jy-1,0)
+        clun(i:i)='1'
      ELSE                ! 0 < μ < 1
         u(i,jy,1) = ( u(i,jy,-1)*(1.0d0-cl)+2.0d0*cl*u(i,jy-1,0) ) / ( 1.0d0+cl )
+        clun(i:i)='-'
      ENDIF
   ENDDO
   !
   DO i=1,ix
-     IF (igrdv(i,jy)==0) CYCLE
+     IF ( igrdv(i,jy)==0 ) THEN
+        clvn(i:i)='*'
+        CYCLE
+     ENDIF
      cl = ( v(i,jy-1,-2)-v(i,jy-1,0) ) / ( v(i,jy-1,0)+v(i,jy-1,-2)-2.0d0*v(i,jy-2,-1) )
-     IF (cl<0 .OR. isnan(cl) ) THEN      ! μ = 0
+     IF ( cl<0.0d0 .OR. isnan(cl) ) THEN      ! μ = 0
         v(i,jy,1) = v(i,jy,-1)
-     ELSE IF (cl>1) THEN ! μ = 1
+        clvn(i:i)='0'
+     ELSE IF ( cl>1.0d0 ) THEN ! μ = 1
         v(i,jy,1) = v(i,jy-1,0)
+        clvn(i:i)='1'
      ELSE                ! 0 < μ < 1
         v(i,jy,1) = ( v(i,jy,-1)*(1.0d0-cl)+2.0d0*cl*v(i,jy-1,0) ) / ( 1.0d0+cl )
+        clvn(i:i)='-'
      ENDIF
   ENDDO
   !
   DO i=1,ix
-     IF (igrdh(i,jy)==0) CYCLE
+     IF ( igrdh(i,jy)==0 ) THEN
+        clhn(i:i)='*'
+        CYCLE
+     ENDIF
      cl = ( h(i,jy-1,-2)-h(i,jy-1,0) ) / ( h(i,jy-1,0)+h(i,jy-1,-2)-2.0d0*h(i,jy-2,-1) )
-     IF (cl<0 .OR. isnan(cl) ) THEN      ! μ = 0
+     IF ( cl<0.0d0 .OR. isnan(cl) ) THEN      ! μ = 0
         h(i,jy,1) = h(i,jy,-1)
-     ELSE IF (cl>1) THEN ! μ = 1
+        clhn(i:i)='0'
+     ELSE IF ( cl>1.0d0 ) THEN ! μ = 1
         h(i,jy,1) = h(i,jy-1,0)
+        clhn(i:i)='1'
      ELSE                ! 0 < μ < 1
         h(i,jy,1) = ( h(i,jy,-1)*(1.0d0-cl)+2.0d0*cl*h(i,jy-1,0) ) / ( 1.0d0+cl )
+        clhn(i:i)='-'
      ENDIF
   ENDDO
   !
   ! ------------------------------ Apply Orlanski radiation condition
   ! ------------------------------ at Southern open boundary
   DO i=1,ix
-     IF (igrdu(i,1)==0) CYCLE
+     IF ( igrdu(i,1)==0 ) THEN
+        clus(i:i)='*'
+        CYCLE
+     ENDIF
      cl = ( u(i,1+1,-2)-u(i,1+1,0) ) / ( u(i,1+1,0)+u(i,1+1,-2)-2.0d0*u(i,1+2,-1) )
-     IF (cl<0 .OR. isnan(cl) ) THEN      ! μ = 0
+     IF ( cl<0.0d0 .OR. isnan(cl) ) THEN      ! μ = 0
         u(i,1,1) = u(i,1,-1)
-     ELSE IF (cl>1) THEN ! μ = 1
+        clus(i:i)='0'
+     ELSE IF ( cl>1.0d0 ) THEN ! μ = 1
         u(i,1,1) = u(i,1+1,0)
+        clus(i:i)='1'
      ELSE                ! 0 < μ < 1
         u(i,1,1) = ( u(i,1,-1)*(1.0d0-cl)+2.0d0*cl*u(i,1+1,0) ) / ( 1.0d0+cl )
+        clus(i:i)='-'
      ENDIF
   ENDDO
   !
   DO i=1,ix
-     IF (igrdv(i,2)==0) CYCLE
+     IF ( igrdv(i,2)==0 ) THEN
+        clvs(i:i)='*'
+        CYCLE
+     ENDIF
      cl = ( v(i,2+1,-2)-v(i,2+1,0) ) / ( v(i,2+1,0)+v(i,2+1,-2)-2.0d0*v(i,2+2,-1) )
-     IF (cl<0 .OR. isnan(cl) ) THEN      ! μ = 0
+     IF ( cl<0.0d0 .OR. isnan(cl) ) THEN      ! μ = 0
         v(i,2,1) = v(i,2,-1)
         v(i,1,1) = v(i,2,-1)
-     ELSE IF (cl>1) THEN ! μ = 1
+        clvs(i:i)='0'
+     ELSE IF ( cl>1.0d0 ) THEN ! μ = 1
         v(i,2,1) = v(i,2+1,0)
         v(i,1,1) = v(i,2+1,0)
+        clvs(i:i)='1'
      ELSE                ! 0 < μ < 1
         v(i,2,1) = ( v(i,2,-1)*(1.0d0-cl)+2.0d0*cl*v(i,2+1,0) ) / ( 1.0d0+cl )
         v(i,1,1) = ( v(i,2,-1)*(1.0d0-cl)+2.0d0*cl*v(i,2+1,0) ) / ( 1.0d0+cl )
+        clvs(i:i)='-'
      ENDIF
   ENDDO
   !
   DO i=1,ix
-     IF (igrdh(i,1)==0) CYCLE
+     IF ( igrdh(i,1)==0 ) THEN
+        clhs(i:i)='*'
+        CYCLE
+     ENDIF
      cl = ( h(i,1+1,-2)-h(i,1+1,0) ) / ( h(i,1+1,0)+h(i,1+1,-2)-2.0d0*h(i,1+2,-1) )
-     IF (cl<0 .OR. isnan(cl) ) THEN      ! μ = 0
+     IF ( cl<0.0d0 .OR. isnan(cl) ) THEN      ! μ = 0
         h(i,1,1) = h(i,1,-1)
-     ELSE IF (cl>1) THEN ! μ = 1
+        clhs(i:i)='0'
+     ELSE IF ( cl>1.0d0 ) THEN ! μ = 1
         h(i,1,1) = h(i,1+1,0)
+        clhs(i:i)='1'
      ELSE                ! 0 < μ < 1
         h(i,1,1) = ( h(i,1,-1)*(1.0d0-cl)+2.0d0*cl*h(i,1+1,0) ) / ( 1.0d0+cl )
+        clhs(i:i)='-'
      ENDIF
   ENDDO
+  !
+  IF (MOD(it,iout)==0) THEN
+     WRITE (71,'(a203)') clun
+     WRITE (72,'(a203)') clvn
+     WRITE (73,'(a203)') clhn
+     WRITE (74,'(a203)') clus
+     WRITE (75,'(a203)') clvs
+     WRITE (76,'(a203)') clhs
+  ENDIF
   !
   RETURN
 END SUBROUTINE orc
@@ -639,7 +677,6 @@ SUBROUTINE energy(it)
   ENDDO
   !
   PRINT *, DBLE(it)/(24.0d0*3600.0d0/dt1),eng,SUM(h(:,:,0))/SUM(igrdh)
-  !!  print '(7e10.3)', dble(it)/(24.0d0*3600.0d0/dt1),v(182,101,0),h(182,101,0),v(182,102,0),h(182,102,0),v(182,103,0),h(182,103,0)
   !
   RETURN
 END SUBROUTINE energy
@@ -744,9 +781,6 @@ SUBROUTINE output(irec)
   INTEGER :: i, j, irec
   REAL :: uu(ix,jy), vv(ix,jy)
   !
-  OPEN(60,file='../dat/output-orc2.dat', &
-       &         form='unformatted', access='direct', recl=(ix-2)*(jy-2)*4)
-  !
   DO j=2,jy-1
      DO i=2,ix-1
         IF (igrdh(i,j)/=0) THEN
@@ -765,8 +799,6 @@ SUBROUTINE output(irec)
   WRITE(60,rec=irec+2) ((REAL(h(i,j,0)),i=2,ix-1),j=2,jy-1)
   irec=irec+3
   !
-  CLOSE(60)
-  !
   RETURN
 END SUBROUTINE output
 
@@ -782,7 +814,7 @@ PROGRAM yum
 
   ! ---------------------------- define model run
   iend = 10000          ! end of run [days]
-  iout = 10            ! output interval [days]
+  iout = 100            ! output interval [days]
   ! ---------------------------- initialize
   CALL initialization
   ! ---------------------------- parameters
@@ -791,6 +823,22 @@ PROGRAM yum
   iend = iend *INT(24.0d0*3600.0d0/dt1)
   iout = iout *INT(24.0d0*3600.0d0/dt1)
   irec = 1
+
+  OPEN(60,file='../dat/output-orc2.dat', &
+       &         form='unformatted', access='direct', recl=(ix-2)*(jy-2)*4)
+  !
+  OPEN(61,file='../dat/land.map')
+  OPEN(62,file='../dat/igrdu.map')
+  OPEN(63,file='../dat/igrdv.map')
+  OPEN(64,file='../dat/igrdh.map')
+  !
+  OPEN(71,file='../dat/clun.log' )
+  OPEN(72,file='../dat/clvn.log' )
+  OPEN(73,file='../dat/clhn.log' )
+  OPEN(74,file='../dat/clus.log' )
+  OPEN(75,file='../dat/clvs.log' )
+  OPEN(76,file='../dat/clhs.log' )
+
   ! ---------------------------- coefficients
   CALL coefficients
   ! ---------------------------- mapping
@@ -802,16 +850,15 @@ PROGRAM yum
   ! ------------------ output initial state & calculating momentum energy
   CALL energy(it)
   CALL output(irec)
-
   ! ---------------------------- loop start
 
   DO it=1,iend
 
      ! ------------------ calculating momentum equations & continuity equations
      CALL calculation(it)
-     ! ------------------ Open boundary Condition
+     ! ------------------ Open Boundary Condition
      ! CALL grd()
-     CALL orc()
+     CALL orc(it,iout)
      ! ------------------ output result & calculating momentum energy
      IF (MOD(it,iout)==0) THEN
         CALL energy(it)
@@ -821,8 +868,20 @@ PROGRAM yum
      CALL nextstep()
 
      ! ---------------------------- loop end
+
   ENDDO
 
+  CLOSE(60)
+  CLOSE(61)
+  CLOSE(62)
+  CLOSE(63)
+  CLOSE(64)
+  CLOSE(71)
+  CLOSE(72)
+  CLOSE(73)
+  CLOSE(74)
+  CLOSE(75)
+  CLOSE(76)
   ! —————————————— end
 END PROGRAM yum
 
