@@ -510,61 +510,61 @@ SUBROUTINE orc(it, iout)
   IMPLICIT NONE
   INTEGER :: i, it, iout
   DOUBLE PRECISION :: cl
-  CHARACTER(203) ::  clun,clvn,clhn,clus,clvs,clhs
+  !  CHARACTER(203) ::  clun,clvn,clhn,clus,clvs,clhs
   !
   ! ------------------------------ Apply Orlanski radiation condition
   ! ------------------------------ at Northern open boundary
   DO i=1,ix
      IF ( igrdu(i,jy)==0 ) THEN
-        clun(i:i)='*'
+        !        clun(i:i)='*'
         CYCLE
      ENDIF
      cl = ( u(i,jy-1,-2)-u(i,jy-1,0) ) / ( u(i,jy-1,0)+u(i,jy-1,-2)-2.0d0*u(i,jy-2,-1) )
      IF ( cl<0.0d0 .OR. isnan(cl) ) THEN      ! μ = 0
         u(i,jy,1) = u(i,jy,-1)
-        clun(i:i)='0'
+        !        clun(i:i)='0'
      ELSE IF ( cl>1.0d0 ) THEN ! μ = 1
         u(i,jy,1) = u(i,jy-1,0)
-        clun(i:i)='1'
+        !        clun(i:i)='1'
      ELSE                ! 0 < μ < 1
         u(i,jy,1) = ( u(i,jy,-1)*(1.0d0-cl)+2.0d0*cl*u(i,jy-1,0) ) / ( 1.0d0+cl )
-        clun(i:i)='-'
+        !        clun(i:i)='-'
      ENDIF
   ENDDO
   !
   DO i=1,ix
      IF ( igrdv(i,jy)==0 ) THEN
-        clvn(i:i)='*'
+        !        clvn(i:i)='*'
         CYCLE
      ENDIF
      cl = ( v(i,jy-1,-2)-v(i,jy-1,0) ) / ( v(i,jy-1,0)+v(i,jy-1,-2)-2.0d0*v(i,jy-2,-1) )
      IF ( cl<0.0d0 .OR. isnan(cl) ) THEN      ! μ = 0
         v(i,jy,1) = v(i,jy,-1)
-        clvn(i:i)='0'
+        !        clvn(i:i)='0'
      ELSE IF ( cl>1.0d0 ) THEN ! μ = 1
         v(i,jy,1) = v(i,jy-1,0)
-        clvn(i:i)='1'
+        !        clvn(i:i)='1'
      ELSE                ! 0 < μ < 1
         v(i,jy,1) = ( v(i,jy,-1)*(1.0d0-cl)+2.0d0*cl*v(i,jy-1,0) ) / ( 1.0d0+cl )
-        clvn(i:i)='-'
+        !        clvn(i:i)='-'
      ENDIF
   ENDDO
   !
   DO i=1,ix
      IF ( igrdh(i,jy)==0 ) THEN
-        clhn(i:i)='*'
+        !        clhn(i:i)='*'
         CYCLE
      ENDIF
      cl = ( h(i,jy-1,-2)-h(i,jy-1,0) ) / ( h(i,jy-1,0)+h(i,jy-1,-2)-2.0d0*h(i,jy-2,-1) )
      IF ( cl<0.0d0 .OR. isnan(cl) ) THEN      ! μ = 0
         h(i,jy,1) = h(i,jy,-1)
-        clhn(i:i)='0'
+        !        clhn(i:i)='0'
      ELSE IF ( cl>1.0d0 ) THEN ! μ = 1
         h(i,jy,1) = h(i,jy-1,0)
-        clhn(i:i)='1'
+        !        clhn(i:i)='1'
      ELSE                ! 0 < μ < 1
         h(i,jy,1) = ( h(i,jy,-1)*(1.0d0-cl)+2.0d0*cl*h(i,jy-1,0) ) / ( 1.0d0+cl )
-        clhn(i:i)='-'
+        !        clhn(i:i)='-'
      ENDIF
   ENDDO
   !
@@ -572,69 +572,69 @@ SUBROUTINE orc(it, iout)
   ! ------------------------------ at Southern open boundary
   DO i=1,ix
      IF ( igrdu(i,1)==0 ) THEN
-        clus(i:i)='*'
+        !        clus(i:i)='*'
         CYCLE
      ENDIF
      cl = ( u(i,1+1,-2)-u(i,1+1,0) ) / ( u(i,1+1,0)+u(i,1+1,-2)-2.0d0*u(i,1+2,-1) )
      IF ( cl<0.0d0 .OR. isnan(cl) ) THEN      ! μ = 0
         u(i,1,1) = u(i,1,-1)
-        clus(i:i)='0'
+        !        clus(i:i)='0'
      ELSE IF ( cl>1.0d0 ) THEN ! μ = 1
         u(i,1,1) = u(i,1+1,0)
-        clus(i:i)='1'
+        !        clus(i:i)='1'
      ELSE                ! 0 < μ < 1
         u(i,1,1) = ( u(i,1,-1)*(1.0d0-cl)+2.0d0*cl*u(i,1+1,0) ) / ( 1.0d0+cl )
-        clus(i:i)='-'
+        !        clus(i:i)='-'
      ENDIF
   ENDDO
   !
   DO i=1,ix
      IF ( igrdv(i,2)==0 ) THEN
-        clvs(i:i)='*'
+        !        clvs(i:i)='*'
         CYCLE
      ENDIF
      cl = ( v(i,2+1,-2)-v(i,2+1,0) ) / ( v(i,2+1,0)+v(i,2+1,-2)-2.0d0*v(i,2+2,-1) )
      IF ( cl<0.0d0 .OR. isnan(cl) ) THEN      ! μ = 0
         v(i,2,1) = v(i,2,-1)
         v(i,1,1) = v(i,2,-1)
-        clvs(i:i)='0'
+        !        clvs(i:i)='0'
      ELSE IF ( cl>1.0d0 ) THEN ! μ = 1
         v(i,2,1) = v(i,2+1,0)
         v(i,1,1) = v(i,2+1,0)
-        clvs(i:i)='1'
+        !        clvs(i:i)='1'
      ELSE                ! 0 < μ < 1
         v(i,2,1) = ( v(i,2,-1)*(1.0d0-cl)+2.0d0*cl*v(i,2+1,0) ) / ( 1.0d0+cl )
         v(i,1,1) = ( v(i,2,-1)*(1.0d0-cl)+2.0d0*cl*v(i,2+1,0) ) / ( 1.0d0+cl )
-        clvs(i:i)='-'
+        !        clvs(i:i)='-'
      ENDIF
   ENDDO
   !
   DO i=1,ix
      IF ( igrdh(i,1)==0 ) THEN
-        clhs(i:i)='*'
+        !        clhs(i:i)='*'
         CYCLE
      ENDIF
      cl = ( h(i,1+1,-2)-h(i,1+1,0) ) / ( h(i,1+1,0)+h(i,1+1,-2)-2.0d0*h(i,1+2,-1) )
      IF ( cl<0.0d0 .OR. isnan(cl) ) THEN      ! μ = 0
         h(i,1,1) = h(i,1,-1)
-        clhs(i:i)='0'
+        !        clhs(i:i)='0'
      ELSE IF ( cl>1.0d0 ) THEN ! μ = 1
         h(i,1,1) = h(i,1+1,0)
-        clhs(i:i)='1'
+        !        clhs(i:i)='1'
      ELSE                ! 0 < μ < 1
         h(i,1,1) = ( h(i,1,-1)*(1.0d0-cl)+2.0d0*cl*h(i,1+1,0) ) / ( 1.0d0+cl )
-        clhs(i:i)='-'
+        !        clhs(i:i)='-'
      ENDIF
   ENDDO
   !
-  IF (MOD(it,iout)==0) THEN
-     WRITE (71,'(a203)') clun
-     WRITE (72,'(a203)') clvn
-     WRITE (73,'(a203)') clhn
-     WRITE (74,'(a203)') clus
-     WRITE (75,'(a203)') clvs
-     WRITE (76,'(a203)') clhs
-  ENDIF
+  !  IF (MOD(it,iout)==0) THEN
+  !     WRITE (71,'(a203)') clun
+  !     WRITE (72,'(a203)') clvn
+  !     WRITE (73,'(a203)') clhn
+  !     WRITE (74,'(a203)') clus
+  !     WRITE (75,'(a203)') clvs
+  !     WRITE (76,'(a203)') clhs
+  !  ENDIF
   !
   RETURN
 END SUBROUTINE orc
@@ -832,12 +832,12 @@ PROGRAM yum
   OPEN(63,file='../dat/igrdv.map')
   OPEN(64,file='../dat/igrdh.map')
   !
-  OPEN(71,file='../dat/clun.log' )
-  OPEN(72,file='../dat/clvn.log' )
-  OPEN(73,file='../dat/clhn.log' )
-  OPEN(74,file='../dat/clus.log' )
-  OPEN(75,file='../dat/clvs.log' )
-  OPEN(76,file='../dat/clhs.log' )
+  !  OPEN(71,file='../dat/clun.log' )
+  !  OPEN(72,file='../dat/clvn.log' )
+  !  OPEN(73,file='../dat/clhn.log' )
+  !  OPEN(74,file='../dat/clus.log' )
+  !  OPEN(75,file='../dat/clvs.log' )
+  !  OPEN(76,file='../dat/clhs.log' )
 
   ! ---------------------------- coefficients
   CALL coefficients
@@ -857,7 +857,7 @@ PROGRAM yum
      ! ------------------ calculating momentum equations & continuity equations
      CALL calculation(it)
      ! ------------------ Open Boundary Condition
-     ! CALL grd()
+     !CALL grd()
      CALL orc(it,iout)
      ! ------------------ output result & calculating momentum energy
      IF (MOD(it,iout)==0) THEN
@@ -876,12 +876,12 @@ PROGRAM yum
   CLOSE(62)
   CLOSE(63)
   CLOSE(64)
-  CLOSE(71)
-  CLOSE(72)
-  CLOSE(73)
-  CLOSE(74)
-  CLOSE(75)
-  CLOSE(76)
+  !  CLOSE(71)
+  !  CLOSE(72)
+  !  CLOSE(73)
+  !  CLOSE(74)
+  !  CLOSE(75)
+  !  CLOSE(76)
   ! —————————————— end
 END PROGRAM yum
 
