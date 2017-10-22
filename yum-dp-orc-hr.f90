@@ -5,8 +5,8 @@
 !  - Equatorial Region
 !  - Orlanski Radiation condition at Northern and Southern boundaries
 !
-!           Target Region: 30S-30N, 120E-70W
-!           Computational Region : 50S-50N, 100E-60W
+!           Target Region: 30S-30N, 120E-70W(290E)
+!           Computational Region : 50S-50N, 100E-60W(300E)
 !           Resolution: 1/4 x 1/4 deg (0.25 x 0.25 deg)
 !
 !                              6th release(hr) 2017/10/20, by hyokota
@@ -19,7 +19,7 @@
 
 MODULE commons
   IMPLICIT NONE
-  INTEGER, PARAMETER :: ix=203, jy=103
+  INTEGER, PARAMETER :: ix=803, jy=403
   DOUBLE PRECISION :: h(ix,jy,-2:1),u(ix,jy,-2:1),v(ix,jy,-2:1)
   DOUBLE PRECISION :: bc,dt1,dt2,dx,dy,x0,y0
   DOUBLE PRECISION :: ah(jy),ahmn,ahmx,rg,hini,omega,pi,re,rho1,rho2
@@ -77,13 +77,13 @@ SUBROUTINE parameters
   USE commons
   IMPLICIT NONE
   DOUBLE PRECISION :: g, torad
-
-  ahmn  = 1.0d4         ! [m**2/s]
-  ahmx  = 1.0d5         ! [m**2/s]
+  !
+  ahmn  = 1.0d0         ! [m**2/s]
+  ahmx  = 1.0d0         ! [m**2/s]
   bc    = 1.0d0         ! boundary condition (slippery=1.,viscous=-1.)
-  dt1   = 900.0d0       ! [s]
-  dx    = 1.0d0         ! [deg]
-  dy    = 1.0d0         ! [deg]
+  dt1   = 300.0d0       ! [s]
+  dx    = 0.25d0        ! [deg]
+  dy    = 0.25d0        ! [deg]
   g     = 9.8d0         ! [m/s**2]
   hini  = 200.0d0       ! [m]
   re    = 6378000.0d0   ! [m]
@@ -307,13 +307,13 @@ SUBROUTINE mapping
      ENDDO
   ENDDO
   ! ------------------------------ Validation
-  DO i=1,ix
-     IF (igrdh(i, 1)>0 ) &
-          &     PRINT *, 'Ocean(h) on the South Wall!', 'i=', i, 'j=', j
-     IF (igrdh(i,jy)>0 ) &
-          &     PRINT *, 'Ocean(h) on the North Wall!', 'i=', i, 'j=', j
-  ENDDO
-
+  !  DO i=1,ix
+  !     IF (igrdh(i, 1)>0 ) &
+  !          &     PRINT *, 'Ocean(h) on the South Wall!', 'i=', i, 'j=', j
+  !     IF (igrdh(i,jy)>0 ) &
+  !          &     PRINT *, 'Ocean(h) on the North Wall!', 'i=', i, 'j=', j
+  !  ENDDO
+  !
   DO j = 1, jy
      IF (igrdh( 1,j)>0 ) &
           &     PRINT *, 'Ocean(h) on the West Wall!', 'i=', i, 'j=', j
@@ -348,16 +348,16 @@ SUBROUTINE mapping
   ENDDO
   !
   DO j=jy,1,-1
-     WRITE (61,'(203i1)') (land(i,j),i=1,ix)
+     WRITE (61,'(803i1)') (land(i,j),i=1,ix)
   ENDDO
   DO j=jy,1,-1
-     WRITE (62,'(203i1)') (igrdu(i,j),i=1,ix)
+     WRITE (62,'(803i1)') (igrdu(i,j),i=1,ix)
   ENDDO
   DO j=jy,1,-1
-     WRITE (63,'(203i1)') (igrdv(i,j),i=1,ix)
+     WRITE (63,'(803i1)') (igrdv(i,j),i=1,ix)
   ENDDO
   DO j=jy,1,-1
-     WRITE (64,'(203i1)') (igrdh(i,j),i=1,ix)
+     WRITE (64,'(803i1)') (igrdh(i,j),i=1,ix)
   ENDDO
 
   !
@@ -384,7 +384,7 @@ SUBROUTINE forcing
   !
   DO j=1,jy
      DO i=1,ix
-        !     taux(i,j)=  0.01d0*cos(2.0d0*pi*dble(j-11)/dble(103-1)) ! 2gyres
+        !     taux(i,j)=  0.01d0*cos(2.0d0*pi*dble(j-11)/dble(403-1)) ! 2gyres
         taux(i,j)=  0.01d0*COS(2.0d0*pi*DBLE(j-1)/DBLE(jy-1)) ! 2gyres
         !     taux(i,j)= -0.01d0*cos(pi*dble(j-1)/dble(jy-1))      ! 1gyre
         !     taux(i,j)= -0.01d0
@@ -394,6 +394,7 @@ SUBROUTINE forcing
      ENDDO
   ENDDO
   ! ------------------------------ big water column at center of the ocean
+  r = 0.0d0
   !  DO j=INT(jy/2)-10,INT(jy/2)+10
   !     DO i=INT(ix/2)-10,INT(ix/2)+10
   !        r = SQRT((DBLE(ix/2+1-i))**2+(DBLE(jy/2+1-j))**2)
@@ -464,11 +465,13 @@ SUBROUTINE calculation(it)
 END SUBROUTINE calculation
 
 ! **********************************************************************
-SUBROUTINE grd()
+SUBROUTINE grd(it, iout)
   ! **********************************************************************
   USE commons
   IMPLICIT NONE
-  INTEGER :: i
+  INTEGER :: i, it, iout, ichk
+  !
+  ichk = MOD(it, iout)
   ! ------------------------------ open boundary at northernmost & southernmost boundary
   DO i=1,ix
      !
@@ -510,10 +513,11 @@ SUBROUTINE orc(it, iout)
   ! **********************************************************************
   USE commons
   IMPLICIT NONE
-  INTEGER :: i, it, iout
+  INTEGER :: i, it, iout, ichk
   DOUBLE PRECISION :: cl
-  !  CHARACTER(203) ::  clun,clvn,clhn,clus,clvs,clhs
+  !  CHARACTER(803) ::  clun,clvn,clhn,clus,clvs,clhs
   !
+  ichk = MOD(it, iout)
   ! ------------------------------ Apply Orlanski radiation condition
   ! ------------------------------ at Northern open boundary
   DO i=1,ix
@@ -630,12 +634,12 @@ SUBROUTINE orc(it, iout)
   ENDDO
   !
   !  IF (MOD(it,iout)==0) THEN
-  !     WRITE (71,'(a203)') clun
-  !     WRITE (72,'(a203)') clvn
-  !     WRITE (73,'(a203)') clhn
-  !     WRITE (74,'(a203)') clus
-  !     WRITE (75,'(a203)') clvs
-  !     WRITE (76,'(a203)') clhs
+  !     WRITE (71,'(a803)') clun
+  !     WRITE (72,'(a803)') clvn
+  !     WRITE (73,'(a803)') clhn
+  !     WRITE (74,'(a803)') clus
+  !     WRITE (75,'(a803)') clvs
+  !     WRITE (76,'(a803)') clhs
   !  ENDIF
   !
   RETURN
@@ -678,7 +682,11 @@ SUBROUTINE energy(it)
      ENDDO
   ENDDO
   !
-  PRINT *, DBLE(it)/(24.0d0*3600.0d0/dt1),eng,SUM(h(:,:,0))/SUM(igrdh)
+  IF ( isnan(eng) ) THEN
+     STOP "energy Overflow!!!"
+  ELSE
+     PRINT *, REAL(DBLE(it)/(24.0d0*3600.0d0/dt1)), eng, SUM(h(:,:,0))/SUM(igrdh)
+  ENDIF
   !
   RETURN
 END SUBROUTINE energy
@@ -815,8 +823,8 @@ PROGRAM yum
   INTEGER :: it, iend, iout, irec
 
   ! ---------------------------- define model run
-  iend = 10000          ! end of run [days]
-  iout = 100            ! output interval [days]
+  iend = 1000          ! end of run [days]
+  iout = 10            ! output interval [days]
   ! ---------------------------- initialize
   CALL initialization
   ! ---------------------------- parameters
@@ -826,7 +834,7 @@ PROGRAM yum
   iout = iout *INT(24.0d0*3600.0d0/dt1)
   irec = 1
 
-  OPEN(60,file='../dat/output-orc2.dat', &
+  OPEN(60,file='../dat/output-hr.dat', &
        &         form='unformatted', access='direct', recl=(ix-2)*(jy-2)*4)
   !
   OPEN(61,file='../dat/land.map')
@@ -859,8 +867,8 @@ PROGRAM yum
      ! ------------------ calculating momentum equations & continuity equations
      CALL calculation(it)
      ! ------------------ Open Boundary Condition
-     !CALL grd()
-     CALL orc(it,iout)
+     !CALL grd(it, iout)
+     CALL orc(it, iout)
      ! ------------------ output result & calculating momentum energy
      IF (MOD(it,iout)==0) THEN
         CALL energy(it)
