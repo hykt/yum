@@ -823,8 +823,8 @@ PROGRAM yum
   INTEGER :: it, iend, iout, irec
 
   ! ---------------------------- define model run
-  iend = 1000          ! end of run [days]
-  iout = 10            ! output interval [days]
+  iend = 100          ! end of run [days]
+  iout = 1            ! output interval [days]
   ! ---------------------------- initialize
   CALL initialization
   ! ---------------------------- parameters
@@ -832,6 +832,7 @@ PROGRAM yum
 
   iend = iend *INT(24.0d0*3600.0d0/dt1)
   iout = iout *INT(24.0d0*3600.0d0/dt1)
+  it = 0
   irec = 1
 
   OPEN(60,file='../dat/output-hr.dat', &
