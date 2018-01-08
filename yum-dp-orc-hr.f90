@@ -832,7 +832,7 @@ PROGRAM yum
 
   iend = iend *INT(24.0d0*3600.0d0/dt1)
   iout = iout *INT(24.0d0*3600.0d0/dt1)
-  it = 0
+  it   = 0
   irec = 1
 
   OPEN(60,file='../dat/output-hr.dat', &
