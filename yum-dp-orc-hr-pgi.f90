@@ -39,7 +39,7 @@ FUNCTION fi2lon(i)
   IMPLICIT NONE
   INTEGER :: i
   DOUBLE PRECISION :: fi2lon
-  fi2lon =  DBLE(i-2)*dx + x0
+  fi2lon = (DBLE(i-2)*dx+x0)*180.0d0/pi
   RETURN
 END FUNCTION fi2lon
 ! **********************************************************************
@@ -69,6 +69,28 @@ FUNCTION lat2j(flat)
   lat2j = INT((flat-y0)/dy)+2
   RETURN
 END FUNCTION lat2j
+! **********************************************************************
+FUNCTION distance( zlon1, zlat1, zlon2, zlat2 )
+  USE commons
+  IMPLICIT NONE
+  DOUBLE PRECISION :: distance
+  DOUBLE PRECISION :: zlon1, zlat1, zlon2, zlat2
+  DOUBLE PRECISION :: clat, dlon, dlat, elon, elat
+  DOUBLE PRECISION :: e2, torad, q
+
+  e2 =0.006694470d0
+  torad = pi/180.0d0
+
+  clat=((zlat1+zlat2)/2.0)*torad
+  q=1.0-(e2*(sin(clat))*(sin(clat)))
+  dlat=torad*((re*(1.0-e2))/q**1.5)
+  dlon=torad*((re*cos(clat))/sqrt(q))
+  elat=((zlat1-zlat2)*dlat)*((zlat1-zlat2)*dlat)
+  elon=((zlon1-zlon2)*dlon)*((zlon1-zlon2)*dlon)
+  distance = sqrt(elat+elon)
+
+  RETURN
+END FUNCTION distance
 ! **********************************************************************
 
 ! **********************************************************************
@@ -370,6 +392,7 @@ SUBROUTINE forcing
   USE commons
   IMPLICIT NONE
   INTEGER :: i, j
+  DOUBLE PRECISION :: fi2lon, fj2lat, distance
   DOUBLE PRECISION :: r
 
   ! ------------------------------ wind stress
@@ -395,10 +418,12 @@ SUBROUTINE forcing
   ENDDO
   ! ------------------------------ big water column at center of the ocean
   r = 0.0d0
-    DO j=INT(jy/2)-10,INT(jy/2)+10
-       DO i=INT(ix/2)-10,INT(ix/2)+10
-          r = SQRT((DBLE(ix/2+1-i))**2+(DBLE(jy/2+1-j))**2)
-          IF ( r<=10.0d0 ) THEN
+    DO j=INT(jy/2)-40,INT(jy/2)+40
+       DO i=INT(ix/2)-40,INT(ix/2)+40
+          r = distance( fi2lon(ix/2), fj2lat(jy/2), fi2lon(i), fj2lat(j) )
+          IF ( r<=500000.0d0 ) THEN
+! print *, ix/2,jy/2,i,j,r
+print *, fi2lon(ix/2), fj2lat(jy/2), fi2lon(i), fj2lat(j), r
              h(i,j,0) = h(i,j,0)+20.0d0
              h(i,j,-1) = h(i,j,-1)+20.0d0
              h(i,j,-2) = h(i,j,-2)+20.0d0
@@ -825,8 +850,8 @@ PROGRAM yum
   INTEGER :: it, iend, iout, irec
 
   ! ---------------------------- define model run
-  iend = 300000          ! end of run [days]
-  iout = 100            ! output interval [days]
+  iend = 100          ! end of run [days]
+  iout = 1            ! output interval [days]
   ! ---------------------------- initialize
   CALL initialization
   ! ---------------------------- parameters
